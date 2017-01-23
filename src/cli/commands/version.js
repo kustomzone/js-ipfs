@@ -1,10 +1,16 @@
-var Command = require('ronin').Command
-var IPFS = require('../../ipfs-core')
+'use strict'
 
-module.exports = Command.extend({
-  desc: 'Shows IPFS version information',
+const utils = require('../utils')
+const debug = require('debug')
+const log = debug('cli:version')
+log.error = debug('cli:version:error')
 
-  options: {
+module.exports = {
+  command: 'version',
+
+  describe: 'Shows IPFS version information',
+
+  builder: {
     number: {
       alias: 'n',
       type: 'boolean',
@@ -20,13 +26,19 @@ module.exports = Command.extend({
     }
   },
 
-  run: function (name) {
-    var node = new IPFS()
-    node.version(function (err, version) {
+  handler (argv) {
+    // TODO: handle argv.{repo|commit|number}
+    utils.getIPFS((err, ipfs) => {
       if (err) {
-        return console.error(err)
+        throw err
       }
-      console.log(version)
+      ipfs.version((err, version) => {
+        if (err) {
+          throw err
+        }
+
+        console.log(`js-ipfs version: ${version.version}`)
+      })
     })
   }
-})
+}

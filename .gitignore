@@ -1,5 +1,6 @@
 **/node_modules/
 **/*.log
+test/repo-tests*
 
 # Logs
 logs
@@ -29,3 +30,6 @@ build
 # Dependency directory
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
 node_modules
+
+lib
+dist

@@ -1,7 +1,10 @@
-var Command = require('ronin').Command
+'use strict'
 
-module.exports = Command.extend({
-  desc: '',
+module.exports = {
+  command: 'ls',
 
-  run: function (name) {}
-})
+  describe: '',
+
+  handler (argv) {
+  }
+}

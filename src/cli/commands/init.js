@@ -1,31 +1,56 @@
-var Command = require('ronin').Command
-// var help = require('../src/help-menu.js')
+'use strict'
 
-module.exports = Command.extend({
-  desc: 'Initialize ipfs local configuration',
+const IpfsRepo = require('ipfs-repo')
+const Ipfs = require('../../core')
+const Store = require('fs-pull-blob-store')
+const utils = require('../utils')
 
-  // help: help,
+module.exports = {
+  command: 'init',
 
-  options: {
+  describe: 'Initialize a local IPFS node',
+
+  builder: {
     bits: {
       type: 'number',
       alias: 'b',
       default: '2048',
-      desc: 'Number of bits to use in the generated RSA private key (defaults to 2048)'
+      describe: 'Number of bits to use in the generated RSA private key (defaults to 2048)'
     },
     force: {
       alias: 'f',
       type: 'boolean',
-      desc: 'Overwrite existing config (if it exists)'
+      describe: 'Overwrite existing config (if it exists)'
     },
-    'empty-repo': {
+    emptyRepo: {
       alias: 'e',
       type: 'boolean',
-      desc: 'Don\'t add and pin help files to the local storage'
+      describe: "Don't add and pin help files to the local storage"
     }
   },
 
-  run: function (name) {
-    console.log('NA - https://github.com/ipfs/js-ipfs/tree/jsipfs#getting-jsipfs-ready')
+  handler (argv) {
+    const path = utils.getRepoPath()
+
+    const log = utils.createLogger(true)
+    log(`initializing ipfs node at ${path}`)
+
+    const repo = new IpfsRepo(path, {
+      stores: Store
+    })
+
+    const ipfs = new Ipfs(repo)
+
+    ipfs.init({
+      bits: argv.bits,
+      force: argv.force,
+      emptyRepo: argv.emptyRepo,
+      log
+    }, function (err) {
+      if (err) {
+        console.error(err.toString())
+        process.exit(1)
+      }
+    })
   }
-})
+}
